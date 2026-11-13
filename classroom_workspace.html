@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classroom</title>
+    <link id="favicon" rel="icon" type="image/svg+xml" href="https://www.gstatic.com/classroom/logo_square_rounded.svg" />
+    <style>
+      :root {
+        --primary: #1967d2;
+        --primary-hover: #1557b0;
+        --bg: #f8f9fa;
+        --surface: #ffffff;
+        --border: #dadce0;
+        --text: #202124;
+        --text-muted: #5f6368;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background-color: var(--bg);
+        font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #top-bar {
+        height: 56px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        flex-shrink: 0;
+        z-index: 50;
+      }
+
+      #top-bar.hidden {
+        display: none;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand img {
+        width: 26px;
+        height: 26px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+
+      .bar-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-muted);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      .icon-btn:hover {
+        background: #f1f3f4;
+        color: var(--text);
+      }
+
+      #loader {
+        height: 3px;
+        width: 100%;
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      #loader.active::after {
+        content: "";
+        position: absolute;
+        left: -40%;
+        width: 40%;
+        height: 100%;
+        background: var(--primary);
+        animation: loading 1.1s infinite ease-in-out;
+      }
+
+      @keyframes loading {
+        0% { left: -40%; }
+        100% { left: 100%; }
+      }
+
+      #frame-wrapper {
+        position: relative;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        position: relative;
+        z-index: 2;
+        background: transparent;
+      }
+
+      #fallback-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+        text-align: center;
+        max-width: 380px;
+        width: 90%;
+        z-index: 1;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      }
+
+      #fallback-card h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+        color: var(--text);
+      }
+
+      #fallback-card p {
+        margin: 0 0 18px;
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      #floating-trigger {
+        position: fixed;
+        bottom: 14px;
+        right: 14px;
+        background: rgba(32, 33, 36, 0.8);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 7px 14px;
+        font-size: 12px;
+        cursor: pointer;
+        z-index: 9998;
+        opacity: 0.25;
+        transition: opacity 0.2s;
+        display: none;
+      }
+
+      #floating-trigger.visible {
+        display: block;
+      }
+
+      #floating-trigger:hover {
+        opacity: 1;
+      }
+
+      #modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(32, 33, 36, 0.55);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+
+      #modal-overlay.hidden {
+        display: none;
+      }
+
+      .modal-card {
+        background: var(--surface);
+        width: 92%;
+        max-width: 440px;
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .modal-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .modal-header img {
+        width: 26px;
+        height: 26px;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .presets-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .preset-btn {
+        background: #f8f9fa;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-size: 11px;
+        color: var(--text);
+        transition: all 0.15s;
+      }
+
+      .preset-btn:hover, .preset-btn.active {
+        border-color: var(--primary);
+        background: #e8f0fe;
+        color: var(--primary);
+      }
+
+      .preset-btn img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .field-group {
+        margin-bottom: 14px;
+      }
+
+      .field-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #3c4043;
+        margin-bottom: 6px;
+      }
+
+      .field-group input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--text);
+        outline: none;
+      }
+
+      .field-group input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(25, 103, 210, 0.15);
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #3c4043;
+        margin-top: 6px;
+        cursor: pointer;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 22px;
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 9px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: background 0.15s;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background: #f1f3f4;
+        color: #3c4043;
+      }
+
+      .btn-secondary:hover {
+        background: #e8eaed;
+      }
+
+      .shortcut-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 14px;
+        text-align: center;
+      }
+
+      kbd {
+        background: #f1f3f4;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-family: monospace;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="top-bar">
+      <div class="brand">
+        <img id="bar-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="Logo" />
+        <span class="brand-title" id="bar-title">Classroom</span>
+      </div>
+      <div class="bar-actions">
+        <button class="icon-btn" onclick="reloadFrame()" title="Reload frame">↻ Reload</button>
+        <button class="icon-btn" onclick="openAboutBlank()" title="Launch in about:blank">↗ Blank Tab</button>
+        <button class="icon-btn" onclick="toggleTopBar()" title="Hide header bar">✕ Hide Bar</button>
+        <button class="icon-btn" onclick="openModal()">⚙ Settings</button>
+      </div>
+    </header>
+
+    <div id="loader"></div>
+
+    <div id="frame-wrapper">
+      <div id="fallback-card">
+        <h3>Waiting for content or embed blocked</h3>
+        <p>Some sites (like Google or login portals) block being embedded in frames. You can launch the link directly instead.</p>
+        <button class="btn btn-primary" onclick="openNewTab()">Open Site in New Tab</button>
+      </div>
+      <iframe id="iframe" src="" allowfullscreen></iframe>
+    </div>
+
+    <button id="floating-trigger" onclick="openModal()">⚙ Settings</button>
+
+    <div id="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <img id="modal-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="Icon" />
+            <h2>Workspace Setup</h2>
+          </div>
+        </div>
+
+        <span class="presets-label">Tab Appearance Preset</span>
+        <div class="preset-grid">
+          <button type="button" class="preset-btn active" onclick="selectPreset('Classroom', 'https://www.gstatic.com/classroom/logo_square_rounded.svg', this)">
+            <img src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="" />
+            Classroom
+          </button>
+          <button type="button" class="preset-btn" onclick="selectPreset('My Drive - Google Drive', 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png', this)">
+            <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="" />
+            Drive
+          </button>
+          <button type="button" class="preset-btn" onclick="selectPreset('Untitled document - Google Docs', 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico', this)">
+            <img src="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" alt="" />
+            Docs
+          </button>
+          <button type="button" class="preset-btn" onclick="selectPreset('Untitled presentation - Google Slides', 'https://ssl.gstatic.com/docs/presentations/images/favicon5.ico', this)">
+            <img src="https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" alt="" />
+            Slides
+          </button>
+        </div>
+
+        <form id="settings-form">
+          <div class="field-group">
+            <label for="url-input">Target Link</label>
+            <input type="text" id="url-input" placeholder="e.g. wikipedia.org or youtube.com/watch?v=..." required />
+          </div>
+
+          <div class="field-group">
+            <label for="title-input">Custom Tab Title</label>
+            <input type="text" id="title-input" placeholder="Classroom" />
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="show-bar-check" checked />
+            Show Classroom header bar at top
+          </label>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="openAboutBlank()">Launch in about:blank</button>
+            <div style="display:flex; gap:8px;">
+              <button type="button" id="cancel-btn" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="shortcut-hint">
+          Press <kbd>Alt</kbd> + <kbd>H</kbd> to toggle controls &bull; Press <kbd>\</kbd> for quick Classroom redirect
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const iframe = document.getElementById('iframe');
+      const loader = document.getElementById('loader');
+      const modal = document.getElementById('modal-overlay');
+      const topBar = document.getElementById('top-bar');
+      const floatingTrigger = document.getElementById('floating-trigger');
+      const urlInput = document.getElementById('url-input');
+      const titleInput = document.getElementById('title-input');
+      const showBarCheck = document.getElementById('show-bar-check');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const favicon = document.getElementById('favicon');
+      const barIcon = document.getElementById('bar-icon');
+      const barTitle = document.getElementById('bar-title');
+      const modalIcon = document.getElementById('modal-icon');
+
+      let state = {
+        url: localStorage.getItem('ws_url') || '',
+        title: localStorage.getItem('ws_title') || 'Classroom',
+        icon: localStorage.getItem('ws_icon') || 'https://www.gstatic.com/classroom/logo_square_rounded.svg',
+        showBar: localStorage.getItem('ws_showBar') !== 'false'
+      };
+
+      function formatUrl(raw) {
+        let url = raw.trim();
+        if (url.startsWith('http://')) {
+          url = url.replace('http://', 'https://');
+        } else if (!url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+
+        const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (yt) return `https://www.youtube.com/embed/${yt[1]}?autoplay=1`;
+
+        const gdoc = url.match(/(docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+)/);
+        if (gdoc) return `https://${gdoc[1]}/preview`;
+
+        return url;
+      }
+
+      function selectPreset(presetTitle, presetIcon, btnEl) {
+        titleInput.value = presetTitle;
+        state.icon = presetIcon;
+        modalIcon.src = presetIcon;
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+      }
+
+      function applyState() {
+        const cleanTitle = state.title.trim() || 'Classroom';
+        document.title = cleanTitle;
+        barTitle.textContent = cleanTitle;
+        favicon.href = state.icon;
+        barIcon.src = state.icon;
+        modalIcon.src = state.icon;
+
+        if (state.showBar) {
+          topBar.classList.remove('hidden');
+          floatingTrigger.classList.remove('visible');
+        } else {
+          topBar.classList.add('hidden');
+          floatingTrigger.classList.add('visible');
+        }
+
+        if (state.url) {
+          loader.classList.add('active');
+          iframe.src = state.url;
+        }
+
+        localStorage.setItem('ws_url', state.url);
+        localStorage.setItem('ws_title', cleanTitle);
+        localStorage.setItem('ws_icon', state.icon);
+        localStorage.setItem('ws_showBar', state.showBar);
+      }
+
+      iframe.addEventListener('load', () => {
+        loader.classList.remove('active');
+      });
+
+      function reloadFrame() {
+        if (state.url) {
+          loader.classList.add('active');
+          iframe.src = state.url;
+        }
+      }
+
+      function toggleTopBar() {
+        state.showBar = !state.showBar;
+        applyState();
+      }
+
+      function openModal() {
+        urlInput.value = state.url;
+        titleInput.value = state.title;
+        showBarCheck.checked = state.showBar;
+        cancelBtn.style.display = state.url ? 'inline-block' : 'none';
+        modal.classList.remove('hidden');
+        urlInput.focus();
+      }
+
+      function closeModal() {
+        if (state.url) modal.classList.add('hidden');
+      }
+
+      function openNewTab() {
+        if (state.url) window.open(state.url, '_blank');
+      }
+
+      function openAboutBlank() {
+        const target = urlInput.value.trim() ? formatUrl(urlInput.value) : state.url;
+        if (!target) return;
+        const win = window.open('about:blank', '_blank');
+        if (!win) return;
+        const cleanTitle = (titleInput.value || state.title || 'Classroom').trim();
+        win.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${cleanTitle}</title>
+              <link rel="icon" href="${state.icon}">
+              <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>
+            </head>
+            <body><iframe src="${target}" allowfullscreen></iframe></body>
+          </html>
+        `);
+        win.document.close();
+      }
+
+      document.getElementById('settings-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        state.url = formatUrl(urlInput.value);
+        state.title = titleInput.value.trim() || 'Classroom';
+        state.showBar = showBarCheck.checked;
+        applyState();
+        closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.altKey && e.key.toLowerCase() === 'h') {
+          if (!topBar.classList.contains('hidden')) {
+            topBar.classList.add('hidden');
+            floatingTrigger.classList.remove('visible');
+          } else {
+            state.showBar ? topBar.classList.remove('hidden') : floatingTrigger.classList.add('visible');
+          }
+        }
+        if (e.key === '\\' && document.activeElement.tagName !== 'INPUT') {
+          window.location.replace('https://classroom.google.com');
+        }
+      });
+
+      if (state.url) {
+        applyState();
+        closeModal();
+      } else {
+        openModal();
+      }
+    </script>
+  </body>
+</html>
