@@ -9,11 +9,28 @@
       :root {
         --primary: #1967d2;
         --primary-hover: #1557b0;
-        --bg: #f8f9fa;
+        --primary-soft: rgba(25, 103, 210, 0.12);
+        --bg: #eef2f6;
+        --chrome-bg: #dee5ee;
         --surface: #ffffff;
-        --border: #dadce0;
-        --text: #202124;
-        --text-muted: #5f6368;
+        --surface-2: #f1f3f4;
+        --border: #d0d7de;
+        --text: #1f2328;
+        --text-muted: #59636e;
+        --danger: #cf222e;
+        --success: #1a7f37;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+      }
+
+      [data-theme="dark"] {
+        --bg: #111318;
+        --chrome-bg: #191c24;
+        --surface: #222631;
+        --surface-2: #2c313f;
+        --border: #363c4d;
+        --text: #eef1f6;
+        --text-muted: #9aa4b5;
+        --shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
       }
 
       * {
@@ -25,71 +42,362 @@
         padding: 0;
         height: 100%;
         overflow: hidden;
-        background-color: var(--bg);
-        font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Google Sans", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
         display: flex;
         flex-direction: column;
+        transition: background-color 0.2s, color 0.2s;
       }
 
-      #top-bar {
-        height: 56px;
-        background: var(--surface);
+      /* Browser Chrome Wrapper */
+      #browser-chrome {
+        background: var(--chrome-bg);
         border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 16px;
         flex-shrink: 0;
         z-index: 50;
+        user-select: none;
       }
 
-      #top-bar.hidden {
+      #browser-chrome.hidden {
         display: none;
       }
 
-      .brand {
+      /* Row 1: Tab Strip */
+      #tab-strip {
         display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .brand img {
-        width: 26px;
-        height: 26px;
-      }
-
-      .brand-title {
-        font-size: 18px;
-        color: var(--text-muted);
-        font-weight: 400;
-      }
-
-      .bar-actions {
-        display: flex;
-        align-items: center;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 6px 10px 0;
         gap: 8px;
+        min-height: 40px;
       }
 
-      .icon-btn {
+      .tabs-left {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .tabs-left::-webkit-scrollbar {
+        display: none;
+      }
+
+      .browser-tab-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        height: 34px;
+        min-width: 115px;
+        max-width: 200px;
+        padding: 0 10px;
+        border-radius: 10px 10px 0 0;
         background: transparent;
-        border: 1px solid transparent;
         color: var(--text-muted);
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        border: 1px solid transparent;
+        border-bottom: none;
         transition: background 0.15s, color 0.15s;
+        flex-shrink: 0;
       }
 
-      .icon-btn:hover {
-        background: #f1f3f4;
+      .browser-tab-item:hover {
+        background: rgba(128, 128, 128, 0.12);
         color: var(--text);
       }
 
+      .browser-tab-item.active {
+        background: var(--surface);
+        color: var(--text);
+        border-color: var(--border);
+        font-weight: 600;
+      }
+
+      .browser-tab-item img {
+        width: 15px;
+        height: 15px;
+        border-radius: 3px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
+
+      .tab-label {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .tab-close {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        flex-shrink: 0;
+      }
+
+      .tab-close:hover {
+        background: rgba(207, 34, 46, 0.15);
+        color: var(--danger);
+      }
+
+      #new-tab-btn {
+        height: 30px;
+        width: 30px;
+        margin-bottom: 3px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 18px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      #new-tab-btn:hover {
+        background: rgba(128, 128, 128, 0.16);
+      }
+
+      .disguise-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 3px 10px 3px 6px;
+        margin-bottom: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .disguise-pill:hover {
+        border-color: var(--primary);
+      }
+
+      .disguise-pill img {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+      }
+
+      /* Row 2: Navigation Toolbar */
+      #nav-bar {
+        background: var(--surface);
+        padding: 7px 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-top: 1px solid var(--border);
+      }
+
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        flex-shrink: 0;
+      }
+
+      .nav-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 15px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s, opacity 0.15s;
+      }
+
+      .nav-btn:hover:not(:disabled) {
+        background: var(--surface-2);
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.32;
+        cursor: default;
+      }
+
+      /* Omnibox */
+      #omnibox-form {
+        flex: 1;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface-2);
+        border: 2px solid transparent;
+        border-radius: 999px;
+        padding: 3px 10px;
+        transition: border-color 0.15s, background 0.15s;
+      }
+
+      #omnibox-form:focus-within {
+        background: var(--surface);
+        border-color: var(--primary);
+      }
+
+      #omni-badge {
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+
+      #omni-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 13px;
+        outline: none;
+        padding: 4px 0;
+        min-width: 60px;
+      }
+
+      #omni-star {
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 16px;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 50%;
+      }
+
+      #omni-star:hover {
+        background: rgba(128, 128, 128, 0.14);
+      }
+
+      #omni-star.saved {
+        color: #f4b400;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
+      }
+
+      .tool-btn {
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+
+      .tool-btn:hover {
+        background: var(--surface-2);
+        border-color: var(--text-muted);
+      }
+
+      .tool-btn.blank-cta {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .tool-btn.blank-cta:hover {
+        background: var(--primary-hover);
+      }
+
+      .tool-btn.exit-cta {
+        color: var(--danger);
+        border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+      }
+
+      .tool-btn.exit-cta:hover {
+        background: color-mix(in srgb, var(--danger) 12%, transparent);
+      }
+
+      /* Row 3: Bookmarks Bar */
+      #bookmarks-bar {
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 5px 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      #bookmarks-bar.hidden {
+        display: none;
+      }
+
+      #bookmarks-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .bm-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-right: 4px;
+        flex-shrink: 0;
+      }
+
+      .bm-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: var(--surface-2);
+        border: 1px solid transparent;
+        color: var(--text);
+        font-size: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .bm-item:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .bm-item img {
+        width: 13px;
+        height: 13px;
+        border-radius: 2px;
+      }
+
+      /* Progress Bar */
       #loader {
         height: 3px;
         width: 100%;
@@ -106,7 +414,7 @@
         width: 40%;
         height: 100%;
         background: var(--primary);
-        animation: loading 1.1s infinite ease-in-out;
+        animation: loading 1s infinite ease-in-out;
       }
 
       @keyframes loading {
@@ -114,221 +422,343 @@
         100% { left: 100%; }
       }
 
-      #frame-wrapper {
+      /* Main Browser Viewport */
+      #viewport {
         position: relative;
         flex: 1;
         width: 100%;
-        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
       }
 
-      iframe {
+      #iframes-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+      }
+
+      #iframes-layer.hidden {
+        display: none;
+      }
+
+      .tab-frame {
         width: 100%;
         height: 100%;
         border: none;
-        position: relative;
-        z-index: 2;
+        display: none;
         background: transparent;
       }
 
-      #fallback-card {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 28px 32px;
-        text-align: center;
-        max-width: 380px;
-        width: 90%;
-        z-index: 1;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      }
-
-      #fallback-card h3 {
-        margin: 0 0 8px;
-        font-size: 16px;
-        color: var(--text);
-      }
-
-      #fallback-card p {
-        margin: 0 0 18px;
-        font-size: 13px;
-        color: var(--text-muted);
-        line-height: 1.5;
-      }
-
-      #floating-trigger {
-        position: fixed;
-        bottom: 14px;
-        right: 14px;
-        background: rgba(32, 33, 36, 0.8);
-        color: #fff;
-        border: none;
-        border-radius: 20px;
-        padding: 7px 14px;
-        font-size: 12px;
-        cursor: pointer;
-        z-index: 9998;
-        opacity: 0.25;
-        transition: opacity 0.2s;
-        display: none;
-      }
-
-      #floating-trigger.visible {
+      .tab-frame.active {
         display: block;
       }
 
-      #floating-trigger:hover {
-        opacity: 1;
-      }
-
-      #modal-overlay {
-        position: fixed;
+      /* Helpful Fallback Behind Iframes */
+      #embed-help-bg {
+        position: absolute;
         inset: 0;
-        background: rgba(32, 33, 36, 0.55);
-        backdrop-filter: blur(5px);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 10000;
+        padding: 20px;
+        z-index: 1;
       }
 
-      #modal-overlay.hidden {
+      .help-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 26px 28px;
+        max-width: 440px;
+        width: 100%;
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+
+      .help-card h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+
+      .help-card p {
+        margin: 0 0 18px;
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
+      .help-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Built-in New Tab Start Page */
+      #home-view {
+        position: absolute;
+        inset: 0;
+        overflow-y: auto;
+        padding: 28px 18px 48px;
+        z-index: 5;
+        background: var(--bg);
+      }
+
+      #home-view.hidden {
         display: none;
       }
 
-      .modal-card {
-        background: var(--surface);
-        width: 92%;
-        max-width: 440px;
-        border-radius: 14px;
-        padding: 24px;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+      .home-container {
+        max-width: 820px;
+        margin: 0 auto;
       }
 
-      .modal-header {
+      .home-hero {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .home-clock {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary);
+        background: var(--primary-soft);
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+      }
+
+      .home-hero h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .home-hero p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      .home-search-box {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        padding: 8px 10px 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--shadow);
+        margin-bottom: 10px;
+        transition: border-color 0.15s;
+      }
+
+      .home-search-box:focus-within {
+        border-color: var(--primary);
+      }
+
+      .home-search-box input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 15px;
+        outline: none;
+        min-width: 80px;
+      }
+
+      .search-mode-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 26px;
+        flex-wrap: wrap;
+      }
+
+      .mode-chip {
+        padding: 3px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .mode-chip.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .section-heading {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin: 0 0 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 18px;
       }
 
-      .modal-header-left {
+      /* Starter App Grid */
+      .apps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+        gap: 12px;
+        margin-bottom: 26px;
+      }
+
+      .app-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: left;
+        cursor: pointer;
+        transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .app-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+      .app-card-top {
         display: flex;
         align-items: center;
         gap: 10px;
       }
 
-      .modal-header img {
-        width: 26px;
-        height: 26px;
-      }
-
-      .modal-header h2 {
-        margin: 0;
+      .app-icon-badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 18px;
-        color: var(--text);
-        font-weight: 600;
+        flex-shrink: 0;
       }
 
-      .presets-label {
+      .app-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .app-card-desc {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      /* about:blank Explainer Banner on Home */
+      .blank-banner {
+        background: var(--surface);
+        border: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+        border-radius: 16px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .blank-banner-left {
+        flex: 1;
+        min-width: 220px;
+      }
+
+      .blank-banner-left h3 {
+        margin: 0 0 5px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .blank-banner-left p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .blank-banner-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* Floating Mini Bar When Hidden */
+      #floating-bar {
+        position: fixed;
+        bottom: 14px;
+        right: 14px;
+        background: rgba(24, 26, 32, 0.9);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        padding: 5px;
+        display: none;
+        align-items: center;
+        gap: 4px;
+        z-index: 9998;
+        opacity: 0.4;
+        transition: opacity 0.2s;
+      }
+
+      #floating-bar.visible {
+        display: flex;
+      }
+
+      #floating-bar:hover {
+        opacity: 1;
+      }
+
+      .float-btn {
+        background: transparent;
+        border: none;
+        color: #fff;
         font-size: 12px;
         font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        margin-bottom: 8px;
-        display: block;
-      }
-
-      .preset-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 18px;
-      }
-
-      .preset-btn {
-        background: #f8f9fa;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 8px 4px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
-        font-size: 11px;
-        color: var(--text);
-        transition: all 0.15s;
-      }
-
-      .preset-btn:hover, .preset-btn.active {
-        border-color: var(--primary);
-        background: #e8f0fe;
-        color: var(--primary);
-      }
-
-      .preset-btn img {
-        width: 20px;
-        height: 20px;
-      }
-
-      .field-group {
-        margin-bottom: 14px;
-      }
-
-      .field-group label {
-        display: block;
-        font-size: 13px;
-        font-weight: 500;
-        color: #3c4043;
-        margin-bottom: 6px;
-      }
-
-      .field-group input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        font-size: 14px;
-        color: var(--text);
-        outline: none;
-      }
-
-      .field-group input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(25, 103, 210, 0.15);
-      }
-
-      .checkbox-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #3c4043;
-        margin-top: 6px;
+        padding: 6px 11px;
+        border-radius: 999px;
         cursor: pointer;
       }
 
-      .modal-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 22px;
-        gap: 8px;
+      .float-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
       }
 
+      /* Buttons */
       .btn {
-        padding: 9px 16px;
-        border-radius: 7px;
+        padding: 9px 15px;
+        border-radius: 10px;
         font-size: 13px;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
-        border: none;
-        transition: background 0.15s;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s;
       }
 
       .btn-primary {
@@ -341,274 +771,1287 @@
       }
 
       .btn-secondary {
-        background: #f1f3f4;
-        color: #3c4043;
+        background: var(--surface-2);
+        color: var(--text);
+        border-color: var(--border);
       }
 
       .btn-secondary:hover {
-        background: #e8eaed;
+        border-color: var(--text-muted);
       }
 
-      .shortcut-hint {
-        font-size: 11px;
+      /* Modal Overlay */
+      #modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 17, 23, 0.6);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 10000;
+      }
+
+      #modal-overlay.hidden {
+        display: none;
+      }
+
+      .modal-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 92vh;
+        overflow-y: auto;
+        padding: 22px 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+
+      /* Modal Section Tabs */
+      .modal-tabs {
+        display: flex;
+        gap: 6px;
+        background: var(--surface-2);
+        padding: 4px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+      }
+
+      .modal-tab-btn {
+        flex: 1;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 7px;
+        background: transparent;
         color: var(--text-muted);
-        margin-top: 14px;
-        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .modal-tab-btn.active {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      }
+
+      .modal-pane {
+        display: none;
+      }
+
+      .modal-pane.active {
+        display: block;
+      }
+
+      /* Before / After Comparison in about:blank Guide */
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 12px 0 16px;
+      }
+
+      .compare-card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .compare-card.highlight {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+      }
+
+      .fake-url-bar {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 5px 8px;
+        font-family: monospace;
+        font-size: 11px;
+        margin-top: 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .steps-list {
+        margin: 10px 0 16px;
+        padding-left: 20px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text-muted);
+      }
+
+      .steps-list li {
+        margin-bottom: 6px;
+      }
+
+      /* Tab Preview & Presets */
+      .tab-preview-box {
+        background: var(--chrome-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px 0;
+        margin-bottom: 14px;
+      }
+
+      .tab-preview-pill {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        padding: 7px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 240px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .tab-preview-pill img {
+        width: 16px;
+        height: 16px;
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .preset-btn {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .preset-btn.active, .preset-btn:hover {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .preset-btn img {
+        width: 18px;
+        height: 18px;
+      }
+
+      .field-group {
+        margin-bottom: 12px;
+      }
+
+      .field-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .field-group input {
+        width: 100%;
+        padding: 9px 11px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        outline: none;
+      }
+
+      .field-group input:focus {
+        border-color: var(--primary);
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .checkbox-row input {
+        accent-color: var(--primary);
+      }
+
+      /* Toast */
+      #toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #1f2328;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.25s ease;
+        z-index: 20000;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
       }
 
       kbd {
-        background: #f1f3f4;
-        border: 1px solid #dadce0;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
         border-radius: 4px;
         padding: 1px 5px;
         font-family: monospace;
         font-size: 11px;
       }
+
+      @media (max-width: 720px) {
+        .tool-label { display: none; }
+        .disguise-pill { display: none; }
+        .compare-grid, .two-col { grid-template-columns: 1fr; }
+        .preset-grid { grid-template-columns: repeat(2, 1fr); }
+      }
     </style>
   </head>
   <body>
-    <header id="top-bar">
-      <div class="brand">
-        <img id="bar-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="Logo" />
-        <span class="brand-title" id="bar-title">Classroom</span>
+    <!-- Browser Top Chrome -->
+    <header id="browser-chrome">
+      <!-- Tab Strip -->
+      <div id="tab-strip">
+        <div class="tabs-left" id="tabs-container">
+          <!-- Dynamic tabs injected here -->
+          <button id="new-tab-btn" onclick="createTab()" title="Open a New Tab">+</button>
+        </div>
+        <button class="disguise-pill" onclick="openModal('look')" title="Change tab look & settings">
+          <img id="disguise-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="" />
+          <span id="disguise-name">Classroom</span>
+        </button>
       </div>
-      <div class="bar-actions">
-        <button class="icon-btn" onclick="reloadFrame()" title="Reload frame">↻ Reload</button>
-        <button class="icon-btn" onclick="openAboutBlank()" title="Launch in about:blank">↗ Blank Tab</button>
-        <button class="icon-btn" onclick="toggleTopBar()" title="Hide header bar">✕ Hide Bar</button>
-        <button class="icon-btn" onclick="openModal()">⚙ Settings</button>
+
+      <!-- Navigation Bar -->
+      <div id="nav-bar">
+        <div class="nav-controls">
+          <button class="nav-btn" id="btn-back" onclick="goBack()" title="Back">←</button>
+          <button class="nav-btn" id="btn-forward" onclick="goForward()" title="Forward">→</button>
+          <button class="nav-btn" id="btn-reload" onclick="reloadActive()" title="Reload">↻</button>
+          <button class="nav-btn" id="btn-home" onclick="goHome()" title="Home / Start Page">🏠</button>
+        </div>
+
+        <form id="omnibox-form">
+          <span id="omni-badge">🏠</span>
+          <input type="text" id="omni-input" placeholder="Type a website link or search topic..." autocomplete="off" />
+          <button type="button" id="omni-star" onclick="toggleBookmarkCurrent()" title="Save Bookmark">☆</button>
+        </form>
+
+        <div class="toolbar-actions">
+          <button class="tool-btn blank-cta" onclick="openDirectBlankFlow()" title="Launch directly in about:blank">
+            ⧉ <span class="tool-label">about:blank</span>
+          </button>
+          <button class="tool-btn" onclick="openModal('look')" title="Tab Look, Bookmarks & Help">
+            ⚙ <span class="tool-label">Settings</span>
+          </button>
+          <button class="tool-btn" onclick="toggleTheme()" id="theme-btn" title="Switch Light / Dark">🌙</button>
+          <button class="tool-btn" onclick="toggleChrome()" title="Hide browser bars (Alt+H)">
+            👁 <span class="tool-label">Hide</span>
+          </button>
+          <button class="tool-btn exit-cta" onclick="panicExit()" title="Quick Exit (Press \)">
+            ⚡ <span class="tool-label">Exit</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bookmarks Bar -->
+      <div id="bookmarks-bar">
+        <span class="bm-label">Bookmarks:</span>
+        <div id="bookmarks-list" style="display:flex; gap:6px; align-items:center;"></div>
       </div>
     </header>
 
     <div id="loader"></div>
 
-    <div id="frame-wrapper">
-      <div id="fallback-card">
-        <h3>Waiting for content or embed blocked</h3>
-        <p>Some sites (like Google or login portals) block being embedded in frames. You can launch the link directly instead.</p>
-        <button class="btn btn-primary" onclick="openNewTab()">Open Site in New Tab</button>
+    <!-- Browser Viewport -->
+    <main id="viewport">
+      <!-- Home / New Tab Page -->
+      <section id="home-view">
+        <div class="home-container">
+          <div class="home-hero">
+            <div class="home-clock" id="home-clock">Welcome!</div>
+            <h1>Student Mini-Browser</h1>
+            <p>Open multiple tabs, explore starter tools, or launch pages cleanly in <code>about:blank</code>.</p>
+          </div>
+
+          <form class="home-search-box" id="home-search-form">
+            <span style="font-size:18px;">🔎</span>
+            <input type="text" id="home-search-input" placeholder="Search a topic (like 'planets') or type a link (like 'desmos.com')..." />
+            <button type="submit" class="btn btn-primary">Go</button>
+          </form>
+
+          <div class="search-mode-row">
+            <span>When searching words, use:</span>
+            <button type="button" class="mode-chip active" id="engine-simple" onclick="setSearchEngine('simple')">Simple Wikipedia (Easy Read)</button>
+            <button type="button" class="mode-chip" id="engine-full" onclick="setSearchEngine('full')">Full Wikipedia</button>
+          </div>
+
+          <!-- Direct about:blank Spotlight Card -->
+          <div class="blank-banner">
+            <div class="blank-banner-left">
+              <h3>⧉ Direct <code>about:blank</code> Mode <span style="font-size:11px; color:var(--primary); background:var(--primary-soft); padding:2px 8px; border-radius:999px;">Built-in Guide</span></h3>
+              <p>Opens a website inside a blank browser tab so the website link stays hidden from the address bar.</p>
+            </div>
+            <div class="blank-banner-actions">
+              <button type="button" class="btn btn-secondary" onclick="openModal('blank')">What is it?</button>
+              <button type="button" class="btn btn-primary" onclick="openModal('blank')">Open Link in about:blank ↗</button>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <span>Starter Tools &amp; Websites</span>
+            <span style="font-size:11px; font-weight:500; text-transform:none;">Click any card to open in this tab</span>
+          </div>
+
+          <div class="apps-grid">
+            <div class="app-card" onclick="openStarter('https://simple.wikipedia.org', 'Simple Wikipedia')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">📖</div>
+                <div class="app-card-title">Simple Wikipedia</div>
+              </div>
+              <div class="app-card-desc">Encyclopedia articles written in clear, easy-to-read English.</div>
+            </div>
+
+            <div class="app-card" onclick="openStarter('https://en.wikipedia.org', 'Wikipedia')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">🌐</div>
+                <div class="app-card-title">Wikipedia</div>
+              </div>
+              <div class="app-card-desc">Full encyclopedia for deep research on any subject.</div>
+            </div>
+
+            <div class="app-card" onclick="openStarter('https://www.desmos.com/scientific', 'Desmos Scientific')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">🧮</div>
+                <div class="app-card-title">Desmos Calculator</div>
+              </div>
+              <div class="app-card-desc">Clean scientific calculator for fractions, powers, and math.</div>
+            </div>
+
+            <div class="app-card" onclick="openStarter('https://www.desmos.com/calculator', 'Desmos Graphing')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">📈</div>
+                <div class="app-card-title">Desmos Graphing</div>
+              </div>
+              <div class="app-card-desc">Plot points, lines, and interactive math graphs.</div>
+            </div>
+
+            <div class="app-card" onclick="openStarter('https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_all.html', 'PhET Forces & Motion')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">🚀</div>
+                <div class="app-card-title">PhET Science Sim</div>
+              </div>
+              <div class="app-card-desc">Interactive Forces &amp; Motion tug-of-war science lab.</div>
+            </div>
+
+            <div class="app-card" onclick="openStarter('https://www.geogebra.org/geometry', 'GeoGebra Geometry')">
+              <div class="app-card-top">
+                <div class="app-icon-badge">📐</div>
+                <div class="app-card-title">GeoGebra Shapes</div>
+              </div>
+              <div class="app-card-desc">Draw triangles, circles, and angles interactively.</div>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <span>Helpful Keyboard Shortcuts</span>
+          </div>
+          <p style="font-size:13px; color:var(--text-muted); margin:0; line-height:1.8;">
+            <kbd>Alt</kbd> + <kbd>H</kbd> Hide or show the browser bar &nbsp;&bull;&nbsp;
+            <kbd>Alt</kbd> + <kbd>B</kbd> Open current page in <code>about:blank</code> &nbsp;&bull;&nbsp;
+            <kbd id="home-panic-key">\</kbd> Quick Exit
+          </p>
+        </div>
+      </section>
+
+      <!-- Fallback Help Behind Iframes -->
+      <div id="embed-help-bg">
+        <div class="help-card">
+          <h3>Waiting for page or blocked by website</h3>
+          <p>
+            Some big websites (like Google Search or social sites) don't allow themselves to load inside another page's frame.
+            If the page stays blank or shows an error, open it directly in a real tab!
+          </p>
+          <div class="help-actions">
+            <button class="btn btn-primary" onclick="openActiveInRealTab()">↗ Open in a Real Tab</button>
+            <button class="btn btn-secondary" onclick="openDirectBlankFlow()">⧉ Try about:blank</button>
+            <button class="btn btn-secondary" onclick="goHome()">🏠 Back Home</button>
+          </div>
+        </div>
       </div>
-      <iframe id="iframe" src="" allowfullscreen></iframe>
+
+      <!-- Persistent Per-Tab Iframes -->
+      <div id="iframes-layer" class="hidden"></div>
+    </main>
+
+    <!-- Floating Bar When Chrome Hidden -->
+    <div id="floating-bar">
+      <button class="float-btn" onclick="toggleChrome()">👁 Show Browser</button>
+      <button class="float-btn" onclick="openDirectBlankFlow()">⧉ about:blank</button>
+      <button class="float-btn" onclick="panicExit()">⚡ Exit</button>
     </div>
 
-    <button id="floating-trigger" onclick="openModal()">⚙ Settings</button>
-
-    <div id="modal-overlay">
+    <!-- Settings & about:blank Modal -->
+    <div id="modal-overlay" class="hidden">
       <div class="modal-card">
         <div class="modal-header">
-          <div class="modal-header-left">
-            <img id="modal-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="Icon" />
-            <h2>Workspace Setup</h2>
-          </div>
+          <h2>Browser Settings &amp; <code>about:blank</code></h2>
+          <button type="button" class="nav-btn" onclick="closeModal()">✕</button>
         </div>
 
-        <span class="presets-label">Tab Appearance Preset</span>
-        <div class="preset-grid">
-          <button type="button" class="preset-btn active" onclick="selectPreset('Classroom', 'https://www.gstatic.com/classroom/logo_square_rounded.svg', this)">
-            <img src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="" />
-            Classroom
-          </button>
-          <button type="button" class="preset-btn" onclick="selectPreset('My Drive - Google Drive', 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png', this)">
-            <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="" />
-            Drive
-          </button>
-          <button type="button" class="preset-btn" onclick="selectPreset('Untitled document - Google Docs', 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico', this)">
-            <img src="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" alt="" />
-            Docs
-          </button>
-          <button type="button" class="preset-btn" onclick="selectPreset('Untitled presentation - Google Slides', 'https://ssl.gstatic.com/docs/presentations/images/favicon5.ico', this)">
-            <img src="https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" alt="" />
-            Slides
-          </button>
+        <div class="modal-tabs">
+          <button type="button" class="modal-tab-btn active" id="mtab-blank" onclick="switchModalTab('blank')">⧉ about:blank Launcher</button>
+          <button type="button" class="modal-tab-btn" id="mtab-look" onclick="switchModalTab('look')">🎨 Tab Look &amp; Bookmarks</button>
+          <button type="button" class="modal-tab-btn" id="mtab-safety" onclick="switchModalTab('safety')">⚡ Quick Exit &amp; Bar</button>
         </div>
 
-        <form id="settings-form">
+        <!-- Pane 1: Direct about:blank + Grade 6 Explanation -->
+        <div class="modal-pane active" id="mpane-blank">
           <div class="field-group">
-            <label for="url-input">Target Link</label>
-            <input type="text" id="url-input" placeholder="e.g. wikipedia.org or youtube.com/watch?v=..." required />
+            <label for="blank-url-input">Website to open in <code>about:blank</code></label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="blank-url-input" placeholder="e.g. simple.wikipedia.org or desmos.com/scientific" />
+              <button type="button" class="btn btn-primary" onclick="launchBlankFromModal()">⧉ Launch Now</button>
+            </div>
           </div>
 
-          <div class="field-group">
-            <label for="title-input">Custom Tab Title</label>
-            <input type="text" id="title-input" placeholder="Classroom" />
+          <div id="browser-blank-wrap" style="margin-bottom:14px; display:none;">
+            <button type="button" class="btn btn-secondary" style="width:100%; justify-content:center;" onclick="launchWholeBrowserInBlank()">
+              🚀 Open This ENTIRE Mini-Browser inside <code>about:blank</code>
+            </button>
           </div>
 
           <label class="checkbox-row">
-            <input type="checkbox" id="show-bar-check" checked />
-            Show Classroom header bar at top
+            <input type="checkbox" id="blank-mini-bar" checked />
+            Add a tiny Hide / Quick Exit bar inside the <code>about:blank</code> tab
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="blank-redirect-orig" />
+            Also switch this original tab to Google Classroom after launching
           </label>
 
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="openAboutBlank()">Launch in about:blank</button>
-            <div style="display:flex; gap:8px;">
-              <button type="button" id="cancel-btn" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-              <button type="submit" class="btn btn-primary">Apply</button>
+          <hr style="border:none; border-top:1px solid var(--border); margin:14px 0;" />
+
+          <strong style="font-size:14px;">What is <code>about:blank</code>? (Simple Guide)</strong>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <strong style="font-size:12px;">Normal Browser Tab</strong>
+              <div class="fake-url-bar">🔗 https://example-site.com</div>
+              <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">Shows the real website link in the address bar.</p>
+            </div>
+            <div class="compare-card highlight">
+              <strong style="font-size:12px;"><code>about:blank</code> Tab</strong>
+              <div class="fake-url-bar">📄 about:blank</div>
+              <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">Shows <strong>about:blank</strong> in the address bar with your chosen tab icon &amp; title!</p>
             </div>
           </div>
-        </form>
 
-        <div class="shortcut-hint">
-          Press <kbd>Alt</kbd> + <kbd>H</kbd> to toggle controls &bull; Press <kbd>\</kbd> for quick Classroom redirect
+          <ol class="steps-list">
+            <li><strong>How it works:</strong> Every browser has a built-in empty page called <code>about:blank</code>. This tool opens that blank page and puts your chosen website neatly inside it.</li>
+            <li><strong>If nothing opens:</strong> Your browser blocked the pop-up! Look at the top-right corner of the real address bar, click the small blocked pop-up icon, and pick <strong>Always allow</strong>.</li>
+            <li><strong>If a website stays blank:</strong> Some big websites block opening inside frames—for those, use <strong>Open in a Real Tab</strong> instead.</li>
+          </ol>
+        </div>
+
+        <!-- Pane 2: Tab Look & Bookmarks -->
+        <div class="modal-pane" id="mpane-look">
+          <div class="tab-preview-box">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Live Preview of Your Outer Browser Tab:</div>
+            <div class="tab-preview-pill">
+              <img id="preview-icon" src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="" />
+              <span id="preview-title">Classroom</span>
+            </div>
+          </div>
+
+          <label style="font-size:12px; font-weight:700; display:block; margin-bottom:8px;">Pick a School Disguise &amp; Color Theme</label>
+          <div class="preset-grid">
+            <button type="button" class="preset-btn active" onclick="selectPreset('Classroom', 'https://www.gstatic.com/classroom/logo_square_rounded.svg', '#1967d2', this)">
+              <img src="https://www.gstatic.com/classroom/logo_square_rounded.svg" alt="" /> Classroom
+            </button>
+            <button type="button" class="preset-btn" onclick="selectPreset('My Drive - Google Drive', 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png', '#1a73e8', this)">
+              <img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="" /> Drive
+            </button>
+            <button type="button" class="preset-btn" onclick="selectPreset('Untitled document - Google Docs', 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico', '#3b78e7', this)">
+              <img src="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" alt="" /> Docs
+            </button>
+            <button type="button" class="preset-btn" onclick="selectPreset('Untitled presentation - Google Slides', 'https://ssl.gstatic.com/docs/presentations/images/favicon5.ico', '#d97706', this)">
+              <img src="https://ssl.gstatic.com/docs/presentations/images/favicon5.ico" alt="" /> Slides
+            </button>
+            <button type="button" class="preset-btn" onclick="selectPreset('Simple Wikipedia', 'https://en.wikipedia.org/static/favicon/wikipedia.ico', '#2b6cb0', this)">
+              <img src="https://en.wikipedia.org/static/favicon/wikipedia.ico" alt="" /> Wikipedia
+            </button>
+            <button type="button" class="preset-btn" onclick="selectPreset('Calculator - Desmos', 'https://www.desmos.com/assets/img/apps/graphing/favicon.ico', '#188038', this)">
+              <img src="https://www.desmos.com/assets/img/apps/graphing/favicon.ico" alt="" /> Desmos
+            </button>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="custom-title-input">Custom Tab Title</label>
+              <input type="text" id="custom-title-input" placeholder="Classroom" />
+            </div>
+            <div class="field-group">
+              <label for="custom-icon-input">Custom Icon Link</label>
+              <input type="text" id="custom-icon-input" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Manage Saved Bookmarks (click ✕ to remove)</label>
+            <div id="manage-bookmarks-list" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn btn-primary" onclick="saveLookSettings()">Save Tab Look</button>
+          </div>
+        </div>
+
+        <!-- Pane 3: Quick Exit & Toolbar -->
+        <div class="modal-pane" id="mpane-safety">
+          <div class="two-col">
+            <div class="field-group">
+              <label for="panic-key-input">Quick Exit Key (1 character)</label>
+              <input type="text" id="panic-key-input" maxlength="1" placeholder="\" />
+            </div>
+            <div class="field-group">
+              <label for="panic-url-input">Quick Exit Destination</label>
+              <input type="text" id="panic-url-input" placeholder="https://classroom.google.com" />
+            </div>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="show-bm-bar-check" checked />
+            Show Bookmarks Bar below the address bar
+          </label>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+            <button type="button" class="btn btn-secondary" style="color:var(--danger);" onclick="resetBrowser()">Reset Everything</button>
+            <button type="button" class="btn btn-primary" onclick="saveSafetySettings()">Save Settings</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <script>
-      const iframe = document.getElementById('iframe');
-      const loader = document.getElementById('loader');
-      const modal = document.getElementById('modal-overlay');
-      const topBar = document.getElementById('top-bar');
-      const floatingTrigger = document.getElementById('floating-trigger');
-      const urlInput = document.getElementById('url-input');
-      const titleInput = document.getElementById('title-input');
-      const showBarCheck = document.getElementById('show-bar-check');
-      const cancelBtn = document.getElementById('cancel-btn');
-      const favicon = document.getElementById('favicon');
-      const barIcon = document.getElementById('bar-icon');
-      const barTitle = document.getElementById('bar-title');
-      const modalIcon = document.getElementById('modal-icon');
+    <div id="toast"></div>
 
-      let state = {
-        url: localStorage.getItem('ws_url') || '',
-        title: localStorage.getItem('ws_title') || 'Classroom',
-        icon: localStorage.getItem('ws_icon') || 'https://www.gstatic.com/classroom/logo_square_rounded.svg',
-        showBar: localStorage.getItem('ws_showBar') !== 'false'
+    <script>
+      const DEFAULT_ICON = 'https://www.gstatic.com/classroom/logo_square_rounded.svg';
+      const DEFAULT_BOOKMARKS = [
+        { title: 'Simple Wikipedia', url: 'https://simple.wikipedia.org' },
+        { title: 'Desmos Calc', url: 'https://www.desmos.com/scientific' },
+        { title: 'PhET Science', url: 'https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_all.html' }
+      ];
+
+      function safeGet(k, fallback) {
+        try {
+          const v = localStorage.getItem(k);
+          return v !== null ? v : fallback;
+        } catch { return fallback; }
+      }
+
+      function safeSet(k, v) {
+        try { localStorage.setItem(k, v); } catch {}
+      }
+
+      function safeGetJson(k, fallback) {
+        try {
+          const raw = localStorage.getItem(k);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch { return fallback; }
+      }
+
+      let config = {
+        disguiseTitle: safeGet('mb_title', 'Classroom'),
+        disguiseIcon: safeGet('mb_icon', DEFAULT_ICON),
+        accent: safeGet('mb_accent', '#1967d2'),
+        theme: safeGet('mb_theme', 'light'),
+        searchEngine: safeGet('mb_engine', 'simple'),
+        showBookmarksBar: safeGet('mb_showBmBar', 'true') !== 'false',
+        panicKey: safeGet('mb_panicKey', '\\'),
+        panicUrl: safeGet('mb_panicUrl', 'https://classroom.google.com'),
+        blankMiniBar: safeGet('mb_blankMiniBar', 'true') !== 'false',
+        blankRedirectOrig: safeGet('mb_blankRedir', 'false') === 'true',
+        bookmarks: safeGetJson('mb_bookmarks', DEFAULT_BOOKMARKS)
       };
 
-      function formatUrl(raw) {
-        let url = raw.trim();
-        if (url.startsWith('http://')) {
-          url = url.replace('http://', 'https://');
-        } else if (!url.startsWith('https://')) {
-          url = 'https://' + url;
+      let tabs = [];
+      let activeTabId = null;
+      let tabCounter = 1;
+      let chromeVisible = true;
+
+      // DOM refs
+      const tabsContainer = document.getElementById('tabs-container');
+      const newTabBtn = document.getElementById('new-tab-btn');
+      const iframesLayer = document.getElementById('iframes-layer');
+      const homeView = document.getElementById('home-view');
+      const omniInput = document.getElementById('omni-input');
+      const omniBadge = document.getElementById('omni-badge');
+      const omniStar = document.getElementById('omni-star');
+      const btnBack = document.getElementById('btn-back');
+      const btnForward = document.getElementById('btn-forward');
+      const loader = document.getElementById('loader');
+      const browserChrome = document.getElementById('browser-chrome');
+      const floatingBar = document.getElementById('floating-bar');
+      const bookmarksBar = document.getElementById('bookmarks-bar');
+      const bookmarksList = document.getElementById('bookmarks-list');
+      const modalOverlay = document.getElementById('modal-overlay');
+
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, m => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[m]));
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+      }
+
+      function formatInputToUrl(raw) {
+        const txt = raw.trim();
+        if (!txt) return '';
+        if (/^https?:\/\//i.test(txt)) {
+          let u = txt.replace(/^http:\/\//i, 'https://');
+          const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+          if (yt) return `https://www.youtube.com/embed/${yt[1]}?autoplay=1`;
+          const gdoc = u.match(/(docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+)/);
+          if (gdoc) return `https://${gdoc[1]}/preview`;
+          return u;
         }
-
-        const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-        if (yt) return `https://www.youtube.com/embed/${yt[1]}?autoplay=1`;
-
-        const gdoc = url.match(/(docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/[a-zA-Z0-9_-]+)/);
-        if (gdoc) return `https://${gdoc[1]}/preview`;
-
-        return url;
+        if (txt.includes('.') && !txt.includes(' ')) {
+          return formatInputToUrl('https://' + txt);
+        }
+        const host = config.searchEngine === 'simple' ? 'simple.wikipedia.org' : 'en.wikipedia.org';
+        return `https://${host}/wiki/Special:Search?search=${encodeURIComponent(txt)}`;
       }
 
-      function selectPreset(presetTitle, presetIcon, btnEl) {
-        titleInput.value = presetTitle;
-        state.icon = presetIcon;
-        modalIcon.src = presetIcon;
-        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-        if (btnEl) btnEl.classList.add('active');
+      function getFaviconForUrl(url) {
+        try {
+          const host = new URL(url).hostname;
+          return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32`;
+        } catch {
+          return '';
+        }
       }
 
-      function applyState() {
-        const cleanTitle = state.title.trim() || 'Classroom';
-        document.title = cleanTitle;
-        barTitle.textContent = cleanTitle;
-        favicon.href = state.icon;
-        barIcon.src = state.icon;
-        modalIcon.src = state.icon;
+      function getCleanName(url) {
+        try {
+          if (url.includes('youtube.com/embed/')) return 'YouTube Video';
+          if (url.includes('simple.wikipedia.org')) return 'Simple Wikipedia';
+          if (url.includes('en.wikipedia.org')) return 'Wikipedia';
+          if (url.includes('desmos.com/scientific')) return 'Desmos Calc';
+          if (url.includes('desmos.com/calculator')) return 'Desmos Graph';
+          if (url.includes('phet.colorado.edu')) return 'PhET Science';
+          if (url.includes('geogebra.org')) return 'GeoGebra';
+          return new URL(url).hostname.replace(/^www\./, '');
+        } catch {
+          return 'Web Page';
+        }
+      }
 
-        if (state.showBar) {
-          topBar.classList.remove('hidden');
-          floatingTrigger.classList.remove('visible');
+      /* Tab Management */
+      function createTab(initialUrl = '', customTitle = '') {
+        const id = 'tab-' + (tabCounter++);
+        const tab = {
+          id,
+          title: customTitle || 'New Tab',
+          url: '',
+          icon: '',
+          mode: 'home',
+          history: [''],
+          historyIndex: 0
+        };
+        tabs.push(tab);
+        activeTabId = id;
+
+        if (initialUrl) {
+          navigateTab(id, initialUrl, customTitle);
         } else {
-          topBar.classList.add('hidden');
-          floatingTrigger.classList.add('visible');
+          renderTabs();
+          syncActiveViewport();
         }
-
-        if (state.url) {
-          loader.classList.add('active');
-          iframe.src = state.url;
-        }
-
-        localStorage.setItem('ws_url', state.url);
-        localStorage.setItem('ws_title', cleanTitle);
-        localStorage.setItem('ws_icon', state.icon);
-        localStorage.setItem('ws_showBar', state.showBar);
+        return id;
       }
 
-      iframe.addEventListener('load', () => {
-        loader.classList.remove('active');
+      function switchTab(id) {
+        activeTabId = id;
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function closeTab(id, e) {
+        if (e) e.stopPropagation();
+        const idx = tabs.findIndex(t => t.id === id);
+        if (idx === -1) return;
+
+        // Destroy iframe so audio/video stops
+        const frame = iframesLayer.querySelector(`iframe[data-tab-id="${id}"]`);
+        if (frame) frame.remove();
+
+        if (tabs.length === 1) {
+          // Reset single tab back to Home
+          tabs[0] = { id: tabs[0].id, title: 'New Tab', url: '', icon: '', mode: 'home', history: [''], historyIndex: 0 };
+          activeTabId = tabs[0].id;
+        } else {
+          tabs.splice(idx, 1);
+          if (activeTabId === id) {
+            const nextTab = tabs[Math.max(0, idx - 1)];
+            activeTabId = nextTab.id;
+          }
+        }
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function getActiveTab() {
+        return tabs.find(t => t.id === activeTabId) || tabs[0];
+      }
+
+      function loadUrlIntoTabFrame(tab, url) {
+        let frame = iframesLayer.querySelector(`iframe[data-tab-id="${tab.id}"]`);
+        if (!url) {
+          if (frame) frame.classList.remove('active');
+          tab.mode = 'home';
+          tab.url = '';
+          tab.title = 'New Tab';
+          tab.icon = '';
+          loader.classList.remove('active');
+          return;
+        }
+
+        tab.mode = 'web';
+        tab.url = url;
+        if (!tab.customTitleLocked) {
+          tab.title = getCleanName(url);
+        }
+        tab.icon = getFaviconForUrl(url);
+
+        if (!frame) {
+          frame = document.createElement('iframe');
+          frame.className = 'tab-frame';
+          frame.setAttribute('data-tab-id', tab.id);
+          frame.setAttribute('allowfullscreen', '');
+          frame.addEventListener('load', () => {
+            if (tab.id === activeTabId) loader.classList.remove('active');
+          });
+          iframesLayer.appendChild(frame);
+        }
+
+        if (tab.id === activeTabId) loader.classList.add('active');
+        if (frame.src !== url) frame.src = url;
+      }
+
+      function navigateTab(tabId, rawInput, customTitle = '') {
+        const tab = tabs.find(t => t.id === tabId);
+        if (!tab) return;
+        const formatted = formatInputToUrl(rawInput);
+        if (!formatted) return;
+
+        tab.customTitleLocked = Boolean(customTitle);
+        if (customTitle) tab.title = customTitle;
+
+        // Trim forward history if navigating from middle
+        if (tab.historyIndex < tab.history.length - 1) {
+          tab.history = tab.history.slice(0, tab.historyIndex + 1);
+        }
+        tab.history.push(formatted);
+        tab.historyIndex = tab.history.length - 1;
+
+        loadUrlIntoTabFrame(tab, formatted);
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function openStarter(url, title) {
+        const tab = getActiveTab();
+        navigateTab(tab.id, url, title);
+      }
+
+      function goBack() {
+        const tab = getActiveTab();
+        if (!tab || tab.historyIndex <= 0) return;
+        tab.historyIndex--;
+        tab.customTitleLocked = false;
+        loadUrlIntoTabFrame(tab, tab.history[tab.historyIndex]);
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function goForward() {
+        const tab = getActiveTab();
+        if (!tab || tab.historyIndex >= tab.history.length - 1) return;
+        tab.historyIndex++;
+        tab.customTitleLocked = false;
+        loadUrlIntoTabFrame(tab, tab.history[tab.historyIndex]);
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function reloadActive() {
+        const tab = getActiveTab();
+        if (!tab || tab.mode !== 'web') return;
+        const frame = iframesLayer.querySelector(`iframe[data-tab-id="${tab.id}"]`);
+        if (frame) {
+          loader.classList.add('active');
+          frame.src = tab.url;
+        }
+      }
+
+      function goHome() {
+        const tab = getActiveTab();
+        if (!tab || tab.mode === 'home') return;
+        if (tab.historyIndex < tab.history.length - 1) {
+          tab.history = tab.history.slice(0, tab.historyIndex + 1);
+        }
+        tab.history.push('');
+        tab.historyIndex = tab.history.length - 1;
+        tab.customTitleLocked = false;
+        loadUrlIntoTabFrame(tab, '');
+        renderTabs();
+        syncActiveViewport();
+      }
+
+      function renderTabs() {
+        // Remove old tab items before newTabBtn
+        tabsContainer.querySelectorAll('.browser-tab-item').forEach(el => el.remove());
+        tabs.forEach(tab => {
+          const el = document.createElement('div');
+          el.className = 'browser-tab-item' + (tab.id === activeTabId ? ' active' : '');
+          const iconHtml = tab.icon
+            ? `<img src="${escapeHtml(tab.icon)}" alt="" onerror="this.style.display='none'" />`
+            : `<span>🏠</span>`;
+          el.innerHTML = `${iconHtml}<span class="tab-label">${escapeHtml(tab.title)}</span><button class="tab-close" title="Close tab">✕</button>`;
+          el.addEventListener('click', () => switchTab(tab.id));
+          el.querySelector('.tab-close').addEventListener('click', (e) => closeTab(tab.id, e));
+          tabsContainer.insertBefore(el, newTabBtn);
+        });
+      }
+
+      function syncActiveViewport() {
+        const tab = getActiveTab();
+        if (!tab) return;
+
+        // Toggle iframes vs home screen
+        iframesLayer.querySelectorAll('.tab-frame').forEach(f => f.classList.remove('active'));
+
+        if (tab.mode === 'home') {
+          homeView.classList.remove('hidden');
+          iframesLayer.classList.add('hidden');
+          omniInput.value = '';
+          omniBadge.textContent = '🏠';
+          loader.classList.remove('active');
+        } else {
+          homeView.classList.add('hidden');
+          iframesLayer.classList.remove('hidden');
+          const frame = iframesLayer.querySelector(`iframe[data-tab-id="${tab.id}"]`);
+          if (frame) frame.classList.add('active');
+          omniInput.value = tab.url;
+          omniBadge.textContent = tab.url.includes('youtube.com/embed') ? '▶' : '🔒';
+        }
+
+        btnBack.disabled = tab.historyIndex <= 0;
+        btnForward.disabled = tab.historyIndex >= tab.history.length - 1;
+        updateBookmarkStar();
+      }
+
+      /* Bookmarks */
+      function updateBookmarkStar() {
+        const tab = getActiveTab();
+        const isSaved = tab && tab.url && config.bookmarks.some(b => b.url === tab.url);
+        omniStar.textContent = isSaved ? '★' : '☆';
+        omniStar.classList.toggle('saved', Boolean(isSaved));
+      }
+
+      function toggleBookmarkCurrent() {
+        const tab = getActiveTab();
+        if (!tab || !tab.url) {
+          showToast('Open a website first to bookmark it!');
+          return;
+        }
+        const idx = config.bookmarks.findIndex(b => b.url === tab.url);
+        if (idx >= 0) {
+          config.bookmarks.splice(idx, 1);
+          showToast('Removed from Bookmarks');
+        } else {
+          config.bookmarks.unshift({ title: tab.title || getCleanName(tab.url), url: tab.url });
+          if (config.bookmarks.length > 14) config.bookmarks.pop();
+          showToast(`Saved "${tab.title}" to Bookmarks!`);
+        }
+        safeSet('mb_bookmarks', JSON.stringify(config.bookmarks));
+        renderBookmarks();
+        updateBookmarkStar();
+      }
+
+      function renderBookmarks() {
+        bookmarksBar.classList.toggle('hidden', !config.showBookmarksBar);
+        bookmarksList.innerHTML = '';
+        config.bookmarks.forEach((bm) => {
+          const btn = document.createElement('button');
+          btn.className = 'bm-item';
+          const fav = getFaviconForUrl(bm.url);
+          btn.innerHTML = `${fav ? `<img src="${escapeHtml(fav)}" alt="" />` : ''}<span>${escapeHtml(bm.title)}</span>`;
+          btn.addEventListener('click', () => {
+            const tab = getActiveTab();
+            navigateTab(tab.id, bm.url, bm.title);
+          });
+          bookmarksList.appendChild(btn);
+        });
+
+        // Also update Settings modal bookmark manager
+        const mgr = document.getElementById('manage-bookmarks-list');
+        if (mgr) {
+          mgr.innerHTML = '';
+          config.bookmarks.forEach((bm, i) => {
+            const pill = document.createElement('span');
+            pill.className = 'bm-item';
+            pill.innerHTML = `<span>${escapeHtml(bm.title)}</span> <strong style="color:var(--danger); cursor:pointer;">✕</strong>`;
+            pill.querySelector('strong').addEventListener('click', () => {
+              config.bookmarks.splice(i, 1);
+              safeSet('mb_bookmarks', JSON.stringify(config.bookmarks));
+              renderBookmarks();
+              updateBookmarkStar();
+            });
+            mgr.appendChild(pill);
+          });
+        }
+      }
+
+      /* Direct about:blank Engine */
+      function openDirectBlankFlow() {
+        const tab = getActiveTab();
+        if (tab && tab.mode === 'web' && tab.url) {
+          launchUrlInAboutBlank(tab.url);
+        } else {
+          openModal('blank');
+        }
+      }
+
+      function launchBlankFromModal() {
+        const raw = document.getElementById('blank-url-input').value.trim();
+        if (!raw) {
+          showToast('Type a website link first!');
+          document.getElementById('blank-url-input').focus();
+          return;
+        }
+        config.blankMiniBar = document.getElementById('blank-mini-bar').checked;
+        config.blankRedirectOrig = document.getElementById('blank-redirect-orig').checked;
+        safeSet('mb_blankMiniBar', String(config.blankMiniBar));
+        safeSet('mb_blankRedir', String(config.blankRedirectOrig));
+        launchUrlInAboutBlank(formatInputToUrl(raw));
+      }
+
+      function launchUrlInAboutBlank(targetUrl) {
+        if (!/^https?:\/\//i.test(targetUrl)) {
+          showToast('Please enter a valid web link.');
+          return;
+        }
+        const win = window.open('about:blank', '_blank');
+        if (!win) {
+          showToast('Pop-up blocked! Click "Allow pop-ups" in your browser address bar.');
+          return;
+        }
+
+        const safeTitle = escapeHtml(config.disguiseTitle || 'Classroom');
+        const safeIcon = escapeHtml(config.disguiseIcon || DEFAULT_ICON);
+        const safeUrl = escapeHtml(targetUrl);
+        const safePanicKey = JSON.stringify(config.panicKey || '\\');
+        const safePanicUrl = JSON.stringify(config.panicUrl || 'https://classroom.google.com');
+        const showMini = document.getElementById('blank-mini-bar')?.checked ?? config.blankMiniBar;
+
+        const miniBarHtml = showMini ? `
+          <div id="mini-ctrl">
+            <button onclick="location.reload()">↻ Reload</button>
+            <button onclick="document.getElementById('mini-ctrl').style.display='none'">👁 Hide</button>
+            <button class="ex" onclick="window.location.replace(${safePanicUrl})">⚡ Exit</button>
+          </div>
+        ` : '';
+
+        win.document.open();
+        win.document.write(`<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${safeTitle}</title>
+    <link rel="icon" href="${safeIcon}" />
+    <style>
+      body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #111; font-family: sans-serif; }
+      iframe { width: 100%; height: 100%; border: none; display: block; }
+      #mini-ctrl {
+        position: fixed; bottom: 12px; right: 12px; z-index: 9999;
+        background: rgba(24,26,32,0.88); backdrop-filter: blur(8px);
+        padding: 4px; border-radius: 999px; display: flex; gap: 4px;
+        border: 1px solid rgba(255,255,255,0.16); opacity: 0.35; transition: opacity 0.2s;
+      }
+      #mini-ctrl:hover { opacity: 1; }
+      #mini-ctrl button {
+        background: transparent; border: none; color: #fff; font-size: 12px;
+        font-weight: 600; padding: 6px 10px; border-radius: 999px; cursor: pointer;
+      }
+      #mini-ctrl button:hover { background: rgba(255,255,255,0.16); }
+      #mini-ctrl button.ex { color: #ff7b72; }
+    </style>
+  </head>
+  <body>
+    <iframe src="${safeUrl}" allowfullscreen></iframe>
+    ${miniBarHtml}
+    <script>
+      document.addEventListener('keydown', function(e) {
+        if (e.key === ${safePanicKey}) window.location.replace(${safePanicUrl});
+        if (e.altKey && e.key.toLowerCase() === 'h') {
+          var bar = document.getElementById('mini-ctrl');
+          if (bar) bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
+        }
       });
+    <\/script>
+  </body>
+</html>`);
+        win.document.close();
+        showToast('Opened in about:blank!');
 
-      function reloadFrame() {
-        if (state.url) {
-          loader.classList.add('active');
-          iframe.src = state.url;
+        if (config.blankRedirectOrig) {
+          window.location.replace(config.panicUrl || 'https://classroom.google.com');
         }
       }
 
-      function toggleTopBar() {
-        state.showBar = !state.showBar;
-        applyState();
+      function launchWholeBrowserInBlank() {
+        if (location.protocol !== 'http:' && location.protocol !== 'https:') {
+          showToast('Full browser blank mode requires hosting on http/https.');
+          return;
+        }
+        launchUrlInAboutBlank(window.location.href);
       }
 
-      function openModal() {
-        urlInput.value = state.url;
-        titleInput.value = state.title;
-        showBarCheck.checked = state.showBar;
-        cancelBtn.style.display = state.url ? 'inline-block' : 'none';
-        modal.classList.remove('hidden');
-        urlInput.focus();
+      /* Theme, Disguise & Settings */
+      function applyConfig() {
+        document.title = config.disguiseTitle || 'Classroom';
+        document.getElementById('favicon').href = config.disguiseIcon || DEFAULT_ICON;
+        document.getElementById('disguise-icon').src = config.disguiseIcon || DEFAULT_ICON;
+        document.getElementById('disguise-name').textContent = (config.disguiseTitle || 'Classroom').split(' - ')[0];
+        document.documentElement.style.setProperty('--primary', config.accent || '#1967d2');
+        document.documentElement.style.setProperty('--primary-soft', (config.accent || '#1967d2') + '1f');
+        document.documentElement.setAttribute('data-theme', config.theme);
+        document.getElementById('theme-btn').textContent = config.theme === 'dark' ? '☀️' : '🌙';
+        document.getElementById('home-panic-key').textContent = config.panicKey || '\\';
+
+        document.getElementById('engine-simple').classList.toggle('active', config.searchEngine === 'simple');
+        document.getElementById('engine-full').classList.toggle('active', config.searchEngine === 'full');
+        renderBookmarks();
+      }
+
+      function toggleTheme() {
+        config.theme = config.theme === 'dark' ? 'light' : 'dark';
+        safeSet('mb_theme', config.theme);
+        applyConfig();
+      }
+
+      function setSearchEngine(eng) {
+        config.searchEngine = eng;
+        safeSet('mb_engine', eng);
+        applyConfig();
+        showToast(eng === 'simple' ? 'Search set to Simple Wikipedia (Easy Read)' : 'Search set to Full Wikipedia');
+      }
+
+      function toggleChrome() {
+        chromeVisible = !chromeVisible;
+        browserChrome.classList.toggle('hidden', !chromeVisible);
+        floatingBar.classList.toggle('visible', !chromeVisible);
+      }
+
+      function openActiveInRealTab() {
+        const tab = getActiveTab();
+        if (tab && tab.url) {
+          window.open(tab.url, '_blank', 'noopener');
+        }
+      }
+
+      function panicExit() {
+        window.location.replace(config.panicUrl || 'https://classroom.google.com');
+      }
+
+      /* Modal Logic */
+      function switchModalTab(name) {
+        ['blank', 'look', 'safety'].forEach(k => {
+          document.getElementById('mtab-' + k).classList.toggle('active', k === name);
+          document.getElementById('mpane-' + k).classList.toggle('active', k === name);
+        });
+      }
+
+      function openModal(tabName = 'blank') {
+        const active = getActiveTab();
+        document.getElementById('blank-url-input').value = (active && active.url) ? active.url : '';
+        document.getElementById('blank-mini-bar').checked = config.blankMiniBar;
+        document.getElementById('blank-redirect-orig').checked = config.blankRedirectOrig;
+        document.getElementById('browser-blank-wrap').style.display =
+          (location.protocol === 'http:' || location.protocol === 'https:') ? 'block' : 'none';
+
+        document.getElementById('custom-title-input').value = config.disguiseTitle;
+        document.getElementById('custom-icon-input').value = config.disguiseIcon;
+        document.getElementById('preview-title').textContent = config.disguiseTitle;
+        document.getElementById('preview-icon').src = config.disguiseIcon;
+
+        document.getElementById('panic-key-input').value = config.panicKey;
+        document.getElementById('panic-url-input').value = config.panicUrl;
+        document.getElementById('show-bm-bar-check').checked = config.showBookmarksBar;
+
+        renderBookmarks();
+        switchModalTab(tabName);
+        modalOverlay.classList.remove('hidden');
       }
 
       function closeModal() {
-        if (state.url) modal.classList.add('hidden');
+        modalOverlay.classList.add('hidden');
       }
 
-      function openNewTab() {
-        if (state.url) window.open(state.url, '_blank');
+      function selectPreset(title, icon, accent, btn) {
+        document.getElementById('custom-title-input').value = title;
+        document.getElementById('custom-icon-input').value = icon;
+        document.getElementById('preview-title').textContent = title;
+        document.getElementById('preview-icon').src = icon;
+        config._pendingAccent = accent;
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
       }
 
-      function openAboutBlank() {
-        const target = urlInput.value.trim() ? formatUrl(urlInput.value) : state.url;
-        if (!target) return;
-        const win = window.open('about:blank', '_blank');
-        if (!win) return;
-        const cleanTitle = (titleInput.value || state.title || 'Classroom').trim();
-        win.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <title>${cleanTitle}</title>
-              <link rel="icon" href="${state.icon}">
-              <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>
-            </head>
-            <body><iframe src="${target}" allowfullscreen></iframe></body>
-          </html>
-        `);
-        win.document.close();
-      }
-
-      document.getElementById('settings-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        state.url = formatUrl(urlInput.value);
-        state.title = titleInput.value.trim() || 'Classroom';
-        state.showBar = showBarCheck.checked;
-        applyState();
+      function saveLookSettings() {
+        config.disguiseTitle = document.getElementById('custom-title-input').value.trim() || 'Classroom';
+        config.disguiseIcon = document.getElementById('custom-icon-input').value.trim() || DEFAULT_ICON;
+        if (config._pendingAccent) config.accent = config._pendingAccent;
+        safeSet('mb_title', config.disguiseTitle);
+        safeSet('mb_icon', config.disguiseIcon);
+        safeSet('mb_accent', config.accent);
+        applyConfig();
         closeModal();
+        showToast('Tab appearance saved!');
+      }
+
+      function saveSafetySettings() {
+        config.panicKey = document.getElementById('panic-key-input').value.trim() || '\\';
+        const rawPanic = document.getElementById('panic-url-input').value.trim() || 'https://classroom.google.com';
+        config.panicUrl = formatInputToUrl(rawPanic);
+        config.showBookmarksBar = document.getElementById('show-bm-bar-check').checked;
+        safeSet('mb_panicKey', config.panicKey);
+        safeSet('mb_panicUrl', config.panicUrl);
+        safeSet('mb_showBmBar', String(config.showBookmarksBar));
+        applyConfig();
+        closeModal();
+        showToast('Settings saved!');
+      }
+
+      function resetBrowser() {
+        try { localStorage.clear(); } catch {}
+        window.location.reload();
+      }
+
+      /* Live Clock Greeting */
+      function updateClock() {
+        const now = new Date();
+        const hr = now.getHours();
+        const greet = hr < 12 ? 'Good morning!' : hr < 17 ? 'Good afternoon!' : 'Good evening!';
+        const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        document.getElementById('home-clock').textContent = `${greet} • ${dateStr} • ${timeStr}`;
+      }
+
+      /* Event Listeners */
+      document.getElementById('omnibox-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = omniInput.value.trim();
+        if (!val) {
+          goHome();
+          return;
+        }
+        const tab = getActiveTab();
+        navigateTab(tab.id, val);
+      });
+
+      document.getElementById('home-search-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('home-search-input');
+        const val = input.value.trim();
+        if (!val) return;
+        const tab = getActiveTab();
+        navigateTab(tab.id, val);
+        input.value = '';
+      });
+
+      document.getElementById('custom-title-input').addEventListener('input', (e) => {
+        document.getElementById('preview-title').textContent = e.target.value.trim() || 'Classroom';
+      });
+      document.getElementById('custom-icon-input').addEventListener('input', (e) => {
+        document.getElementById('preview-icon').src = e.target.value.trim() || DEFAULT_ICON;
+      });
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
       });
 
       document.addEventListener('keydown', (e) => {
+        const tag = document.activeElement?.tagName;
+        const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+
         if (e.altKey && e.key.toLowerCase() === 'h') {
-          if (!topBar.classList.contains('hidden')) {
-            topBar.classList.add('hidden');
-            floatingTrigger.classList.remove('visible');
-          } else {
-            state.showBar ? topBar.classList.remove('hidden') : floatingTrigger.classList.add('visible');
-          }
+          e.preventDefault();
+          toggleChrome();
         }
-        if (e.key === '\\' && document.activeElement.tagName !== 'INPUT') {
-          window.location.replace('https://classroom.google.com');
+        if (e.altKey && e.key.toLowerCase() === 'b') {
+          e.preventDefault();
+          openDirectBlankFlow();
+        }
+        if (!isTyping && e.key === config.panicKey) {
+          panicExit();
         }
       });
 
-      if (state.url) {
-        applyState();
-        closeModal();
-      } else {
-        openModal();
-      }
+      /* Boot Browser */
+      applyConfig();
+      updateClock();
+      setInterval(updateClock, 20000);
+      createTab();
     </script>
   </body>
 </html>
