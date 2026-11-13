@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Classroom</title>
+    <link rel="icon" type="image/png" href="https://gstatic.com">
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="iframe" src=""></iframe>
+    <script>
+      let link = prompt('What is your link?');
+      let title = prompt('What is your Google Classroom name?');
+
+      function apply() {
+        if (link) {
+          document.getElementById('iframe').src = link;
+        }
+        document.title = title && title.trim() ? title.trim() : 'Classroom';
+      }
+
+      apply();
+    </script>
+  </body>
+</html>
