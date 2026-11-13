@@ -8,28 +8,66 @@
         margin: 0;
         padding: 0;
         height: 100%;
+        overflow: hidden;
       }
       iframe {
         width: 100%;
         height: 100%;
         border: none;
       }
+      #change-btn {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        padding: 8px 14px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        z-index: 9999;
+      }
+      #change-btn:hover {
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
     <iframe id="iframe" src=""></iframe>
-    <script>
-      let link = prompt('What is your link?');
-      let title = prompt('What is your Google Classroom name?');
+    <button id="change-btn" onclick="changeLink()">Change Link</button>
 
-      function apply() {
-        if (link) {
-          document.getElementById('iframe').src = link;
+    <script>
+      function formatUrl(url) {
+        let cleanUrl = url.trim();
+        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+          cleanUrl = 'https://' + cleanUrl;
         }
-        document.title = title && title.trim() ? title.trim() : 'Classroom';
+        return cleanUrl;
       }
 
-      apply();
+      function apply(link, title) {
+        if (link && link.trim()) {
+          document.getElementById('iframe').src = formatUrl(link);
+        }
+        if (title !== null) {
+          document.title = title.trim() ? title.trim() : 'Classroom';
+        }
+      }
+
+      function changeLink() {
+        let newLink = prompt('Enter the new link:');
+        if (newLink && newLink.trim()) {
+          document.getElementById('iframe').src = formatUrl(newLink);
+        }
+      }
+
+      let initialLink = prompt('What is your link?');
+      let initialTitle = prompt('What is your Google Classroom name?');
+      apply(initialLink, initialTitle);
     </script>
   </body>
 </html>
