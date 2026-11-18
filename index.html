@@ -1123,8 +1123,8 @@
 
           <div class="search-mode-row">
             <span>When searching words, use:</span>
-            <button type="button" class="mode-chip active" id="engine-simple" onclick="setSearchEngine('simple')">Simple Wikipedia (Easy Read)</button>
-            <button type="button" class="mode-chip" id="engine-full" onclick="setSearchEngine('full')">Full Wikipedia</button>
+            <button type="button" class="mode-chip active" id="engine-simple" onclick="setSearchEngine('google')">Google Search</button>
+            <button type="button" class="mode-chip" id="engine-full" onclick="setSearchEngine('bing')">Bing Search</button>
           </div>
 
           <!-- Direct about:blank Spotlight Card -->
@@ -1210,8 +1210,7 @@
         <div class="help-card">
           <h3>Waiting for page or blocked by website</h3>
           <p>
-            Some big websites (like Google Search or social sites) don't allow themselves to load inside another page's frame.
-            If the page stays blank or shows an error, open it directly in a real tab!
+            Some websites block iframe embedding, and school networks may block search providers. Google is set to embedded search mode, but if it stays blank or shows an error, that provider may not allow it on your network.
           </p>
           <div class="help-actions">
             <button class="btn btn-primary" onclick="openActiveInRealTab()">↗ Open in a Real Tab</button>
@@ -1406,7 +1405,7 @@
         disguiseIcon: safeGet('mb_icon', DEFAULT_ICON),
         accent: safeGet('mb_accent', '#1967d2'),
         theme: safeGet('mb_theme', 'light'),
-        searchEngine: safeGet('mb_engine', 'simple'),
+        searchEngine: safeGet('mb_engine', 'google'),
         showBookmarksBar: safeGet('mb_showBmBar', 'true') !== 'false',
         panicKey: safeGet('mb_panicKey', '\\'),
         panicUrl: safeGet('mb_panicUrl', 'https://classroom.google.com'),
@@ -1465,8 +1464,11 @@
         if (txt.includes('.') && !txt.includes(' ')) {
           return formatInputToUrl('https://' + txt);
         }
-        const host = config.searchEngine === 'simple' ? 'simple.wikipedia.org' : 'en.wikipedia.org';
-        return `https://${host}/wiki/Special:Search?search=${encodeURIComponent(txt)}`;
+        // Search results load in this app's existing iframe tab.
+        // Google's igu=1 mode is intended for embedded search views.
+        return config.searchEngine === 'bing'
+          ? `https://www.bing.com/search?q=${encodeURIComponent(txt)}`
+          : `https://www.google.com/search?igu=1&q=${encodeURIComponent(txt)}`;
       }
 
       function getFaviconForUrl(url) {
@@ -1878,8 +1880,13 @@
         document.getElementById('theme-btn').textContent = config.theme === 'dark' ? '☀️' : '🌙';
         document.getElementById('home-panic-key').textContent = config.panicKey || '\\';
 
-        document.getElementById('engine-simple').classList.toggle('active', config.searchEngine === 'simple');
-        document.getElementById('engine-full').classList.toggle('active', config.searchEngine === 'full');
+        // Migrate older Wikipedia / DuckDuckGo preferences to embedded Google search.
+        if (!['google', 'bing'].includes(config.searchEngine)) {
+          config.searchEngine = 'google';
+          safeSet('mb_engine', config.searchEngine);
+        }
+        document.getElementById('engine-simple').classList.toggle('active', config.searchEngine === 'google');
+        document.getElementById('engine-full').classList.toggle('active', config.searchEngine === 'bing');
         renderBookmarks();
       }
 
@@ -1890,10 +1897,10 @@
       }
 
       function setSearchEngine(eng) {
-        config.searchEngine = eng;
-        safeSet('mb_engine', eng);
+        config.searchEngine = eng === 'bing' ? 'bing' : 'google';
+        safeSet('mb_engine', config.searchEngine);
         applyConfig();
-        showToast(eng === 'simple' ? 'Search set to Simple Wikipedia (Easy Read)' : 'Search set to Full Wikipedia');
+        showToast(config.searchEngine === 'bing' ? 'Search set to Bing' : 'Search set to Google');
       }
 
       function toggleChrome() {
